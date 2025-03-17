@@ -65,9 +65,11 @@ namespace DefaultNamespace
             }
         }
 
-        public UniTask<DogBreedInfo> GetBreedInfoDataAsync(CancellationToken token)
+        public async UniTask<DogBreedInfo> GetBreedInfoDataAsync(CancellationToken token)
         {
-            return UniTask.FromResult(_result);
+            await ExecuteAsync(token);
+
+            return _result;
         }
     }
 
