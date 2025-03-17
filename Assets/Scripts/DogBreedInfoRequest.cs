@@ -21,46 +21,36 @@ namespace DefaultNamespace
 
         public async UniTask ExecuteAsync(CancellationToken token)
         {
-            Debug.Log($"📡 Запрашиваем информацию о породе {_breedId}...");
-
             using var request = UnityWebRequest.Get(ApiUrl + _breedId);
             await request.SendWebRequest().WithCancellation(token);
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"✅ Успешный ответ от API, начинаем обработку...");
-
                 try
                 {
-                    // ✅ Парсим JSON через `Newtonsoft.Json`
                     var parsedData = JsonConvert.DeserializeObject<DogBreedApiResponse>(request.downloadHandler.text);
 
                     if (parsedData?.Data == null)
                     {
-                        Debug.LogError($"❌ Ошибка: JSON не содержит данных!");
                         _result = null;
                         return;
                     }
-
-                    // ✅ Преобразуем API-ответ в `DogBreedInfo`
+                    
                     _result = new DogBreedInfo
                     {
                         id = parsedData.Data.Id,
                         name = parsedData.Data.Attributes.Name,
                         description = parsedData.Data.Attributes.Description
                     };
-
-                    Debug.Log($"📌 Найдена порода: {_result.name}");
+                    
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError($"❌ Ошибка парсинга данных: {e.Message}");
                     _result = null;
                 }
             }
             else
             {
-                Debug.LogError($"❌ Ошибка загрузки данных: {request.error}");
                 _result = null;
             }
         }

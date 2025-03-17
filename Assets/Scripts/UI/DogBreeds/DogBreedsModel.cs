@@ -29,7 +29,7 @@ namespace DefaultNamespace.UI.DogBreeds
             Debug.Log($"📡 Запрос информации о породе {breedId}...");
     
             var request = new DogBreedInfoRequest(breedId);
-            _requestQueueManager.EnqueueRequest(request);
+            //_requestQueueManager.EnqueueRequest(request);
 
             var breedInfo = await request.GetBreedInfoDataAsync(token);
 

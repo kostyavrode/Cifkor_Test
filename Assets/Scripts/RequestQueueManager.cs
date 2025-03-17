@@ -19,6 +19,7 @@ public class RequestQueueManager
     {
         _requestQueue.Enqueue(request);
         ProcessQueue().Forget();
+        Debug.Log("Добавлен процесс");
     }
 
     /// <summary>

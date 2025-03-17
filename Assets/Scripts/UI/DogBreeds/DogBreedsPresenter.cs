@@ -28,12 +28,12 @@ namespace DefaultNamespace.UI.DogBreeds
         {
             _view.OnBreedClicked += HandleBreedClicked;
             _view.OnViewActivated += OnViewActivated;
-            LoadBreedsAsync().Forget();
         }
 
         public void Dispose()
         {
             _view.OnBreedClicked -= HandleBreedClicked;
+            _view.OnViewActivated -= OnViewActivated;
         }
 
         private void OnViewActivated()
