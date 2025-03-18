@@ -26,7 +26,6 @@ namespace DefaultNamespace.Services
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning($" Загрузка изображения отменена: {url}");
                 return null;
             }
         }

@@ -37,7 +37,6 @@ namespace DefaultNamespace.UI.DogBreeds
             }
             catch (OperationCanceledException)
             {
-                Debug.LogWarning("Запрос пород отменен.");
                 return new List<DogBreed>();
             }
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using TMPro;
+using UI.Popup;
 using UnityEngine;
 
 namespace DefaultNamespace.UI.DogBreeds
@@ -7,9 +8,7 @@ namespace DefaultNamespace.UI.DogBreeds
     public class DogBreedsView : MonoBehaviour
     {
         [SerializeField] private Transform _breedsContainer;
-        [SerializeField] private GameObject _popup;
-        [SerializeField] private TMP_Text _headerPopupText;
-        [SerializeField] private TMP_Text _popupText;
+        [SerializeField] private PopupView _popup;
         
         public event Action<string, DogBreedsButton> OnBreedClicked;
         public event Action OnViewActivated;
@@ -28,9 +27,7 @@ namespace DefaultNamespace.UI.DogBreeds
 
         public void ShowPopup(string header,string description)
         {
-            _headerPopupText.text = header;
-            _popupText.text = description;
-            _popup.SetActive(true);
+            _popup.Show(header, description);
         }
 
         public void ClearButtons()

@@ -1084,9 +1084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _breedsContainer: {fileID: 1518794725}
-  _popup: {fileID: 1180275921}
-  _headerPopupText: {fileID: 898966649}
-  _popupText: {fileID: 890501609}
+  _popup: {fileID: 1180275925}
 --- !u!1 &834809642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1537,6 +1535,7 @@ GameObject:
   - component: {fileID: 1180275922}
   - component: {fileID: 1180275924}
   - component: {fileID: 1180275923}
+  - component: {fileID: 1180275925}
   m_Layer: 5
   m_Name: Popup
   m_TagString: Untagged
@@ -1604,6 +1603,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1180275921}
   m_CullTransparentMesh: 1
+--- !u!114 &1180275925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1180275921}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be9c48c3652e4ec3b02a126b4bcf8427, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  headerText: {fileID: 898966649}
+  contentText: {fileID: 890501609}
+  contentRect: {fileID: 147566307}
+  popupRect: {fileID: 1180275922}
+  closeButton: {fileID: 2124769634}
 --- !u!1 &1345956301
 GameObject:
   m_ObjectHideFlags: 0

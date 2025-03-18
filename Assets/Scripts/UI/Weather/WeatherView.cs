@@ -12,7 +12,7 @@ namespace DefaultNamespace
 
         public void UpdateWeather(WeatherRequest.WeatherData data, Sprite sprite)
         {
-            temperatureText.text = $"Сегодня {data.Temperature}{data.TemperatureUnit}";
+            temperatureText.text = "Сегодня "+data.Temperature+data.TemperatureUnit;
             weatherIcon.sprite = sprite;
         }
     }
