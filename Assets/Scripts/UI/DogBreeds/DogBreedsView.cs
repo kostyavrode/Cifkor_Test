@@ -9,12 +9,11 @@ namespace DefaultNamespace.UI.DogBreeds
     {
         [SerializeField] private Transform _breedsContainer;
         [SerializeField] private GameObject popup;
+        [SerializeField] private TMP_Text headerPopupText;
         [SerializeField] private TMP_Text popupText;
         
         public event Action<string, DogBreedsButton> OnBreedClicked;
         public event Action OnViewActivated;
-        
-        public Transform GetContainer() => _breedsContainer;
         
         private void OnEnable()
         {
@@ -30,7 +29,8 @@ namespace DefaultNamespace.UI.DogBreeds
 
         public void ShowPopup(string header,string description)
         {
-            popupText.text = $"{header}\n\n{description}";
+            headerPopupText.text = header;
+            popupText.text = description;
             popup.SetActive(true);
         }
 
