@@ -1,25 +1,34 @@
 ﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace DefaultNamespace.Services
 {
     public class SpriteService
     {
-        public async UniTask<Sprite> LoadSpriteAsync(string url)
+        private readonly RequestQueueManager _requestQueueManager;
+
+        public SpriteService(RequestQueueManager requestQueueManager)
         {
-            using var request = UnityWebRequestTexture.GetTexture(url);
-            await request.SendWebRequest();
+            _requestQueueManager = requestQueueManager;
+        }
 
-            if (request.result == UnityWebRequest.Result.Success)
+        public async UniTask<Sprite> LoadSpriteAsync(string url, CancellationToken token)
+        {
+            var request = new SpriteRequest(url);
+            _requestQueueManager.EnqueueRequest(request);
+
+            try
             {
-                var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
+                await request.CompletionSource.Task.AttachExternalCancellation(token);
+                return request.GetSprite();
             }
-
-            Debug.LogError($"Ошибка загрузки изображения: {request.error}");
-            return null;
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning($" Загрузка изображения отменена: {url}");
+                return null;
+            }
         }
     }
 }

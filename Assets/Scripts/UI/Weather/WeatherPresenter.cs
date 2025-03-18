@@ -29,7 +29,7 @@ namespace DefaultNamespace
                 var weatherData = await _model.GetWeatherAsync();
                 if (weatherData != null)
                 {
-                    var sprite = await _spriteService.LoadSpriteAsync(weatherData.IconUrl);
+                    var sprite = await _spriteService.LoadSpriteAsync(weatherData.IconUrl,_cts.Token);
                     _view.UpdateWeather(weatherData, sprite);
                 }
 
