@@ -8,33 +8,38 @@ namespace DefaultNamespace
     {
         private readonly WeatherModel _model;
         private readonly WeatherView _view;
-        private readonly CancellationTokenSource _cts = new();
+        private CancellationTokenSource _cts;
 
         public WeatherPresenter(WeatherModel model, WeatherView view)
         {
             _model = model;
             _view = view;
-            StartUpdatingWeather();
+            _cts = new CancellationTokenSource();
+            StartUpdatingWeather().Forget();
         }
 
-        public void StartUpdatingWeather()
+        private async UniTaskVoid StartUpdatingWeather()
         {
-            UpdateWeatherLoop(_cts.Token).Forget();
-        }
-
-        public void StopUpdatingWeather()
-        {
-            _cts.Cancel();
-        }
-
-        private async UniTaskVoid UpdateWeatherLoop(CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
+            while (!_cts.Token.IsCancellationRequested)
             {
-                var weather = await _model.GetWeatherAsync(token);
-                _view.UpdateWeatherText($"🌤 {weather.Temperature}°C, {weather.Condition}");
+                if (_view.gameObject.activeInHierarchy)
+                {
+                    var request = new WeatherRequest();
+                    _model.EnqueueWeatherRequest(request);
 
-                await UniTask.Delay(5000, cancellationToken: token); // ⏳ Ждём 5 секунд
+                    var weatherData = await request.GetWeatherDataAsync(_cts.Token);
+
+                    if (_view.gameObject.activeInHierarchy)
+                    {
+                        _view.UpdateWeather(weatherData);
+                    }
+                    else
+                    {
+                        _model.CancelWeatherRequest(request);
+                    }
+                }
+
+                await UniTask.Delay(5000, cancellationToken: _cts.Token);
             }
         }
     }

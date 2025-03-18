@@ -12,13 +12,14 @@ namespace DefaultNamespace
             _requestQueueManager = requestQueueManager;
         }
 
-        public async UniTask<WeatherData> GetWeatherAsync(CancellationToken token)
+        public void EnqueueWeatherRequest(WeatherRequest request)
         {
-            var request = new WeatherRequest();
             _requestQueueManager.EnqueueRequest(request);
+        }
 
-            await request.CompletionSource.Task; // Ждём выполнения запроса
-            return await request.GetWeatherDataAsync();
+        public void CancelWeatherRequest(WeatherRequest request)
+        {
+            _requestQueueManager.RemoveRequest(request);
         }
     }
 }

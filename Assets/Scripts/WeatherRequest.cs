@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -8,13 +9,13 @@ namespace DefaultNamespace
 {
     public class WeatherRequest : IRequest
     {
-        private const string WeatherApiUrl = "https://api.weather.gov/gridpoints/TOP/32,81/forecast";
-        private WeatherData _weatherData;
-        public UniTaskCompletionSource<bool> CompletionSource { get; } = new();
+        private const string ApiUrl = "https://api.weather.gov/gridpoints/TOP/32,81/forecast"; // Укажи правильный URL
+        private WeatherData _result;
+        public UniTaskCompletionSource<bool> CompletionSource { get; } = new UniTaskCompletionSource<bool>();
 
         public async UniTask ExecuteAsync(CancellationToken token)
         {
-            using var request = UnityWebRequest.Get(WeatherApiUrl);
+            using var request = UnityWebRequest.Get(ApiUrl);
             await request.SendWebRequest().WithCancellation(token);
 
             if (request.result == UnityWebRequest.Result.Success)
@@ -23,59 +24,54 @@ namespace DefaultNamespace
 
                 try
                 {
-                    var parsedData = JsonConvert.DeserializeObject<WeatherApiResponse>(request.downloadHandler.text);
-                    _weatherData = new WeatherData
-                    {
-                        Temperature = parsedData?.Current?.TempC ?? 0,
-                        Condition = parsedData?.Current?.Condition?.Text ?? "Неизвестно"
-                    };
-
-                    Debug.Log($"✅ Погода: {_weatherData.Temperature}°C, {_weatherData.Condition}");
+                    _result = ParseWeatherData(request.downloadHandler.text);
+                    CompletionSource.TrySetResult(true);
                 }
                 catch (System.Exception e)
                 {
                     Debug.LogError($"❌ Ошибка парсинга данных: {e.Message}");
-                    _weatherData = new WeatherData();
+                    _result = null;
+                    CompletionSource.TrySetException(e);
                 }
             }
             else
             {
                 Debug.LogError($"❌ Ошибка загрузки погоды: {request.error}");
-                _weatherData = new WeatherData();
+                _result = null;
+                CompletionSource.TrySetException(new System.Exception(request.error));
             }
-
-            CompletionSource.TrySetResult(true); // ✅ Сообщаем, что запрос выполнен
         }
 
-        public UniTask<WeatherData> GetWeatherDataAsync()
+        public async UniTask<WeatherData> GetWeatherDataAsync(CancellationToken token)
         {
-            return UniTask.FromResult(_weatherData);
+            await CompletionSource.Task.AttachExternalCancellation(token);
+            return _result;
         }
-    }
-    public class WeatherData
-    {
-        public float Temperature;
-        public string Condition;
-    }
 
-    public class WeatherApiResponse
-    {
-        [JsonProperty("current")]
-        public WeatherApiCurrent Current { get; set; }
-    }
+        private WeatherData ParseWeatherData(string json)
+        {
+            var data = JObject.Parse(json);
+            var todayPeriod = data["properties"]["periods"][0];
 
-    public class WeatherApiCurrent
-    {
-        [JsonProperty("temp_c")]
-        public float TempC { get; set; }
+            return new WeatherData(
+                todayPeriod["temperature"].Value<int>(),
+                todayPeriod["temperatureUnit"].Value<string>(),
+                todayPeriod["icon"].Value<string>()
+            );
+        }
 
-        [JsonProperty("condition")]
-        public WeatherApiCondition Condition { get; set; }
-    }
+        public class WeatherData
+        {
+            public int Temperature { get; }
+            public string TemperatureUnit { get; }
+            public string IconUrl { get; }
 
-    public class WeatherApiCondition
-    {
-        [JsonProperty("text")]
-        public string Text { get; set; }
+            public WeatherData(int temperature, string temperatureUnit, string iconUrl)
+            {
+                Temperature = temperature;
+                TemperatureUnit = temperatureUnit;
+                IconUrl = iconUrl;
+            }
+        }
     }
 }
