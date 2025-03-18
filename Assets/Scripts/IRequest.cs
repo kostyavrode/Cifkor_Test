@@ -6,5 +6,6 @@ namespace DefaultNamespace
     public interface IRequest
     {
         UniTask ExecuteAsync(CancellationToken token);
+        UniTaskCompletionSource<bool> CompletionSource { get; }
     }
 }

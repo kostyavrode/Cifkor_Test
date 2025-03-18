@@ -16,13 +16,14 @@ namespace DefaultNamespace.Services
 
         public async UniTask<List<DogBreed>> GetBreedsAsync(CancellationToken token)
         {
-            var request = new DogBreedRequest();
+            var request = new DogBreedRequest(); 
             _requestQueueManager.EnqueueRequest(request);
-    
+            
+            await request.CompletionSource.Task;
             // ✅ Дожидаемся выполнения запроса перед получением данных
-            await request.ExecuteAsync(token); 
+            //await request.ExecuteAsync(token); 
     
-            var breeds = await request.GetBreedsDataAsync();
+            var breeds = request.GetBreedsDataAsync();
     
             Debug.Log($"📡 Получено {breeds?.Count} пород");
     

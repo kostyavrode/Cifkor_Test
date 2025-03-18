@@ -13,6 +13,8 @@ namespace DefaultNamespace
         private readonly string _breedId;
         private const string ApiUrl = "https://dogapi.dog/api/v2/breeds/";
         private DogBreedInfo _result;
+        
+        public UniTaskCompletionSource<bool> CompletionSource { get; } = new UniTaskCompletionSource<bool>();
 
         public DogBreedInfoRequest(string breedId)
         {
@@ -53,6 +55,7 @@ namespace DefaultNamespace
             {
                 _result = null;
             }
+            CompletionSource.TrySetResult(true);
         }
 
         public async UniTask<DogBreedInfo> GetBreedInfoDataAsync(CancellationToken token)

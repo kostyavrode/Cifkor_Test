@@ -8,6 +8,7 @@ namespace DefaultNamespace.DI
 {
     public class Installer : MonoInstaller
     {
+        [SerializeField] private WeatherView _weatherView;
         [SerializeField] private GameObject dogBreedsScreen;
         [SerializeField] private DogBreedsButton dogButtonPrefab;
         [SerializeField] private Transform buttonContainer;
@@ -25,6 +26,9 @@ namespace DefaultNamespace.DI
 
             // Представление (UI) - получаем компонент с объекта сцены
             Container.Bind<DogBreedsView>().FromComponentOn(dogBreedsScreen).AsSingle();
+            
+            Container.Bind<WeatherModel>().AsSingle();
+            Container.Bind<WeatherPresenter>().AsSingle().WithArguments(_weatherView).NonLazy();
 
             // Фабрика кнопок с Zenject
             Container.BindFactory<DogBreedsButton, DogButtonFactory>()

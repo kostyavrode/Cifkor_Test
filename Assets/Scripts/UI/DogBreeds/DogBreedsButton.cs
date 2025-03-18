@@ -31,7 +31,7 @@ namespace DefaultNamespace.UI.DogBreeds
         public void SetLoading(bool isLoading)
         {
             loadingIndicator.SetActive(isLoading);
-            _breedText.text = isLoading ? "Загрузка..." : _breedText.text;
+            //_breedText.text = isLoading ? "Загрузка..." : _breedText.text;
             _button.interactable = !isLoading;
         }
 

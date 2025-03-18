@@ -11,6 +11,8 @@ namespace DefaultNamespace
     {
         private const string DogApiUrl = "https://dogapi.dog/api/v2/breeds";
         private List<DogBreed> _breeds;
+        
+        public UniTaskCompletionSource<bool> CompletionSource { get; } = new UniTaskCompletionSource<bool>();
 
         public async UniTask ExecuteAsync(CancellationToken token)
         {
@@ -56,11 +58,12 @@ namespace DefaultNamespace
                 Debug.LogError($"❌ Ошибка загрузки пород: {request.error}");
                 _breeds = new List<DogBreed>();
             }
+            CompletionSource.TrySetResult(true);
         }
         
-        public UniTask<List<DogBreed>> GetBreedsDataAsync()
+        public List<DogBreed> GetBreedsDataAsync()
         {
-            return UniTask.FromResult(_breeds);
+            return _breeds;
         }
     }
     
