@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using DefaultNamespace.Services;
 using UnityEngine;
 using Zenject;
 
@@ -21,42 +21,63 @@ namespace DefaultNamespace.UI.DogBreeds
         
         public async UniTask<List<DogBreed>> GetBreedsAsync(CancellationToken cancelToken)
         {
-            var request = new DogBreedRequest(); 
+            var request = new DogBreedRequest();
+            _currentRequest = request;
+
             _requestQueueManager.EnqueueRequest(request);
-            
-            await request.CompletionSource.Task;
-    
-            var breeds = request.GetBreedsData();
-    
-            _currentRequest = null;
-            return breeds;
+
+            try
+            {
+                await request.CompletionSource.Task.AttachExternalCancellation(cancelToken);
+        
+                var breeds = request.GetBreedsData();
+
+                _currentRequest = null;
+                return breeds ?? new List<DogBreed>();
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.LogWarning("Запрос пород отменен.");
+                return new List<DogBreed>();
+            }
         }
         
         public async UniTask<DogBreedInfo> GetBreedInfoAsync(string breedId, CancellationToken token)
         {
             var request = new DogBreedInfoRequest(breedId);
+            _currentBreedInfoRequest = request;
 
-            var breedInfo = await request.GetBreedInfoDataAsync(token);
+            _requestQueueManager.EnqueueRequest(request);
 
-            if (breedInfo == null)
+            try
             {
-                Debug.LogError("Не удалось получить информацию о породе:"+breedId);
-            }
+                var breedInfo = await request.GetBreedInfoDataAsync(token);
 
-            _currentBreedInfoRequest = null;
-            return breedInfo;
+                _currentBreedInfoRequest = null;
+                return breedInfo;
+            }
+            catch (OperationCanceledException)
+            {
+                return null;
+            }
         }
         
         public void CancelBreedRequest()
         {
             if (_currentRequest != null)
-            _requestQueueManager.RemoveRequest(_currentRequest);
+            {
+                _requestQueueManager.RemoveRequest(_currentRequest);
+                _currentRequest = null;
+            }
         }
 
         public void CancelBreedInfoRequest()
         {
             if (_currentBreedInfoRequest != null)
-            _requestQueueManager.RemoveRequest(_currentBreedInfoRequest);
+            {
+                _requestQueueManager.RemoveRequest(_currentBreedInfoRequest);
+                _currentBreedInfoRequest = null;
+            }
         }
     }
 }

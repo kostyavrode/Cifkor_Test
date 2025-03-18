@@ -45,24 +45,42 @@ namespace DefaultNamespace.UI.DogBreeds
         {
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
-            var breeds = await _model.GetBreedsAsync(_cts.Token);
-
-            _view.ClearButtons();
-            _activeButtons.Clear();
-
-            for (int i = 0; i < 10; i++)
+            try
             {
-                var button = _factory.Create();
-                button.Initialize(breeds[i].id, breeds[i].name);
-                _view.AddButton(button);
-                _activeButtons.Add(button);
+                var breeds = await _model.GetBreedsAsync(_cts.Token);
+
+                if (!_view.gameObject.activeInHierarchy)
+                {
+                    _model.CancelBreedRequest();
+                    return;
+                }
+
+                _view.ClearButtons();
+                _activeButtons.Clear();
+
+                for (int i = 0; i < 10; i++)
+                {
+                    var button = _factory.Create();
+                    button.Initialize(breeds[i].id, breeds[i].name);
+                    _view.AddButton(button);
+                    _activeButtons.Add(button);
+                }
             }
+            catch (OperationCanceledException)
+            {
+                Debug.Log("Запрос пород отменен, так как _view был закрыт.");
+            }
+
         }
         
         private async void HandleBreedClicked(string breedId, DogBreedsButton button)
         {
             button.SetLoading(true);
             var breedInfo = await _model.GetBreedInfoAsync(breedId, _cts.Token);
+            if (!_view.gameObject.activeInHierarchy)
+            {
+                _model.CancelBreedInfoRequest();
+            }
             button.SetLoading(false);
 
             if (breedInfo != null)

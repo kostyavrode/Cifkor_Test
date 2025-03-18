@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace DefaultNamespace
@@ -24,44 +23,60 @@ namespace DefaultNamespace
         public async UniTask ExecuteAsync(CancellationToken token)
         {
             using var request = UnityWebRequest.Get(ApiUrl + _breedId);
-            await request.SendWebRequest().WithCancellation(token);
+            var operation = request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.Success)
+            try
             {
-                try
-                {
-                    var parsedData = JsonConvert.DeserializeObject<DogBreedApiResponse>(request.downloadHandler.text);
+                await operation.WithCancellation(token);
 
-                    if (parsedData?.Data == null)
+                if (request.result == UnityWebRequest.Result.Success)
+                {
+                    try
+                    {
+                        var parsedData = JsonConvert.DeserializeObject<DogBreedApiResponse>(request.downloadHandler.text);
+
+                        if (parsedData?.Data == null)
+                        {
+                            _result = null;
+                            CompletionSource.TrySetResult(false);
+                            return;
+                        }
+
+                        _result = new DogBreedInfo
+                        {
+                            id = parsedData.Data.Id,
+                            name = parsedData.Data.Attributes.Name,
+                            description = parsedData.Data.Attributes.Description
+                        };
+
+                        CompletionSource.TrySetResult(true);
+                    }
+                    catch (System.Exception e)
                     {
                         _result = null;
-                        return;
+                        CompletionSource.TrySetException(e);
                     }
-                    
-                    _result = new DogBreedInfo
-                    {
-                        id = parsedData.Data.Id,
-                        name = parsedData.Data.Attributes.Name,
-                        description = parsedData.Data.Attributes.Description
-                    };
-                    
                 }
-                catch (System.Exception e)
+                else
                 {
                     _result = null;
+                    CompletionSource.TrySetException(new System.Exception(request.error));
                 }
             }
-            else
+            catch (OperationCanceledException)
+            {
+                CompletionSource.TrySetCanceled();
+            }
+            catch (System.Exception e)
             {
                 _result = null;
+                CompletionSource.TrySetException(e);
             }
-            CompletionSource.TrySetResult(true);
         }
 
         public async UniTask<DogBreedInfo> GetBreedInfoDataAsync(CancellationToken token)
         {
             await ExecuteAsync(token);
-
             return _result;
         }
     }
@@ -71,6 +86,7 @@ namespace DefaultNamespace
     {
         public List<DogBreedInfo> breedsInfo;
     }
+
     [System.Serializable]
     public class DogBreedInfoAttributes
     {

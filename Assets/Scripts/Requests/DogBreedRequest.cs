@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace DefaultNamespace
@@ -17,17 +17,19 @@ namespace DefaultNamespace
         public async UniTask ExecuteAsync(CancellationToken token)
         {
             using var request = UnityWebRequest.Get(DogApiUrl);
-            await request.SendWebRequest().WithCancellation(token);
+            var operation = request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.Success)
+            try
             {
-                try
+                await operation.WithCancellation(token);
+
+                if (request.result == UnityWebRequest.Result.Success)
                 {
                     var parsedData = JsonConvert.DeserializeObject<DogApiResponse>(request.downloadHandler.text);
                     if (parsedData?.Data == null)
                     {
-                        Debug.LogError("Ошибка парсинга JSON: список пуст!");
                         _breeds = new List<DogBreed>();
+                        CompletionSource.TrySetResult(false);
                         return;
                     }
 
@@ -41,30 +43,29 @@ namespace DefaultNamespace
                         });
                     }
 
+                    CompletionSource.TrySetResult(true);
                 }
-                catch (System.Exception e)
+                else
                 {
-                    Debug.LogError($"Ошибка парсинга данных: {e.Message}");
                     _breeds = new List<DogBreed>();
+                    CompletionSource.TrySetException(new System.Exception(request.error));
                 }
             }
-            else
+            catch (OperationCanceledException)
             {
-                Debug.LogError($"Ошибка загрузки пород: {request.error}");
-                _breeds = new List<DogBreed>();
+                CompletionSource.TrySetCanceled();
             }
-            CompletionSource.TrySetResult(true);
+            catch (System.Exception e)
+            {
+                _breeds = new List<DogBreed>();
+                CompletionSource.TrySetException(e);
+            }
         }
-        
+
         public List<DogBreed> GetBreedsData()
         {
             return _breeds;
         }
-    }
-    
-    public class DogBreedList
-    {
-        public List<DogBreed> breeds;
     }
 
     public class DogBreed
@@ -72,7 +73,7 @@ namespace DefaultNamespace
         public string id;
         public string name;
     }
-    
+
     public class DogApiResponse
     {
         [JsonProperty("data")]

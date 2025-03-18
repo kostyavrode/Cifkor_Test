@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 
 namespace DefaultNamespace
 {
@@ -28,8 +27,8 @@ namespace DefaultNamespace
 
         public void CancelWeatherRequest()
         {
-            if (_currentRequest != null)
-            _requestQueueManager.RemoveRequest(_currentRequest);
+            if (_currentRequest != null) 
+                _requestQueueManager.RemoveRequest(_currentRequest);
         }
     }
 }

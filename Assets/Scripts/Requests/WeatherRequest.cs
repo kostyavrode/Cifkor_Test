@@ -1,42 +1,45 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
 using UnityEngine.Networking;
 
 namespace DefaultNamespace
 {
     public class WeatherRequest : IRequest
     {
-        private const string ApiUrl = "https://api.weather.gov/gridpoints/TOP/32,81/forecast"; // Укажи правильный URL
+        private const string ApiUrl = "https://api.weather.gov/gridpoints/TOP/32,81/forecast"; 
         private WeatherData _result;
         public UniTaskCompletionSource<bool> CompletionSource { get; } = new UniTaskCompletionSource<bool>();
 
         public async UniTask ExecuteAsync(CancellationToken token)
         {
             using var request = UnityWebRequest.Get(ApiUrl);
-            await request.SendWebRequest().WithCancellation(token);
+            var operation = request.SendWebRequest();
 
-            if (request.result == UnityWebRequest.Result.Success)
+            try
             {
-                try
+                await operation.WithCancellation(token);
+
+                if (request.result == UnityWebRequest.Result.Success)
                 {
                     _result = ParseWeatherData(request.downloadHandler.text);
                     CompletionSource.TrySetResult(true);
                 }
-                catch (System.Exception e)
+                else
                 {
-                    Debug.LogError($"Ошибка парсинга данных: {e.Message}");
                     _result = null;
-                    CompletionSource.TrySetException(e);
+                    CompletionSource.TrySetException(new System.Exception(request.error));
                 }
             }
-            else
+            catch (OperationCanceledException)
             {
-                Debug.LogError($" Ошибка загрузки погоды: {request.error}");
+                CompletionSource.TrySetCanceled();
+            }
+            catch (System.Exception e)
+            {
                 _result = null;
-                CompletionSource.TrySetException(new System.Exception(request.error));
+                CompletionSource.TrySetException(e);
             }
         }
 
