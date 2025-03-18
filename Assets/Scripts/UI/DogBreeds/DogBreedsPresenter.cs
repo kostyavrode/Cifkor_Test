@@ -43,14 +43,9 @@ namespace DefaultNamespace.UI.DogBreeds
         
         public async UniTaskVoid LoadBreedsAsync()
         {
-            Debug.Log("📡 Начинаем загрузку пород...");
-
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             var breeds = await _model.GetBreedsAsync(_cts.Token);
-            Debug.Log(breeds);
-
-            Debug.Log($"✅ Загружено пород: {breeds.Count}");
 
             _view.ClearButtons();
             _activeButtons.Clear();
@@ -66,7 +61,6 @@ namespace DefaultNamespace.UI.DogBreeds
         
         private async void HandleBreedClicked(string breedId, DogBreedsButton button)
         {
-            Debug.Log($"🟢 Нажата кнопка породы {breedId}, загружаем информацию...");
             button.SetLoading(true);
             var breedInfo = await _model.GetBreedInfoAsync(breedId, _cts.Token);
             button.SetLoading(false);

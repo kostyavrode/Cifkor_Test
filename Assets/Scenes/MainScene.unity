@@ -1084,9 +1084,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _breedsContainer: {fileID: 1518794725}
-  popup: {fileID: 1180275921}
-  headerPopupText: {fileID: 898966649}
-  popupText: {fileID: 890501609}
+  _popup: {fileID: 1180275921}
+  _headerPopupText: {fileID: 898966649}
+  _popupText: {fileID: 890501609}
 --- !u!1 &834809642
 GameObject:
   m_ObjectHideFlags: 0

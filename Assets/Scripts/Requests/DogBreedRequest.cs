@@ -21,20 +21,16 @@ namespace DefaultNamespace
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"📡 Получены данные: {request.downloadHandler.text}");
-
                 try
                 {
-                    // ✅ Используем `Newtonsoft.Json` для парсинга API
                     var parsedData = JsonConvert.DeserializeObject<DogApiResponse>(request.downloadHandler.text);
                     if (parsedData?.Data == null)
                     {
-                        Debug.LogError("❌ Ошибка парсинга JSON: список пуст!");
+                        Debug.LogError("Ошибка парсинга JSON: список пуст!");
                         _breeds = new List<DogBreed>();
                         return;
                     }
 
-                    // ✅ Преобразуем в нужную структуру `DogBreedList`
                     _breeds = new List<DogBreed>();
                     foreach (var breed in parsedData.Data)
                     {
@@ -45,17 +41,16 @@ namespace DefaultNamespace
                         });
                     }
 
-                    Debug.Log($"✅ Загружено {_breeds.Count} пород!");
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError($"❌ Ошибка парсинга данных: {e.Message}");
+                    Debug.LogError($"Ошибка парсинга данных: {e.Message}");
                     _breeds = new List<DogBreed>();
                 }
             }
             else
             {
-                Debug.LogError($"❌ Ошибка загрузки пород: {request.error}");
+                Debug.LogError($"Ошибка загрузки пород: {request.error}");
                 _breeds = new List<DogBreed>();
             }
             CompletionSource.TrySetResult(true);

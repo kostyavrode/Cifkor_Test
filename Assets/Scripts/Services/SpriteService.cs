@@ -20,7 +20,7 @@ namespace DefaultNamespace.Services
             }
             else
             {
-                Debug.LogError($"❌ Ошибка загрузки изображения: {request.error}");
+                Debug.LogError(" Ошибка загрузки изображения:"+request.error);
             }
         }
     }
