@@ -56,7 +56,7 @@ namespace DefaultNamespace
             CompletionSource.TrySetResult(true);
         }
         
-        public List<DogBreed> GetBreedsDataAsync()
+        public List<DogBreed> GetBreedsData()
         {
             return _breeds;
         }

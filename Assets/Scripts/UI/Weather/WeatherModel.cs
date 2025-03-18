@@ -6,20 +6,30 @@ namespace DefaultNamespace
     public class WeatherModel
     {
         private readonly RequestQueueManager _requestQueueManager;
+        private WeatherRequest _currentRequest;
 
         public WeatherModel(RequestQueueManager requestQueueManager)
         {
             _requestQueueManager = requestQueueManager;
         }
 
-        public void EnqueueWeatherRequest(WeatherRequest request)
+        public async UniTask<WeatherRequest.WeatherData> GetWeatherAsync()
         {
+            var request = new WeatherRequest();
             _requestQueueManager.EnqueueRequest(request);
+            
+            await request.CompletionSource.Task;
+            
+            var weatherData = request.GetWeatherData();
+
+            _currentRequest = null;
+            return weatherData;
         }
 
-        public void CancelWeatherRequest(WeatherRequest request)
+        public void CancelWeatherRequest()
         {
-            _requestQueueManager.RemoveRequest(request);
+            if (_currentRequest != null)
+            _requestQueueManager.RemoveRequest(_currentRequest);
         }
     }
 }

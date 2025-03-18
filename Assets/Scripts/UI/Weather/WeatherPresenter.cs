@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using Cysharp.Threading.Tasks;
-using UnityEngine;
 
 namespace DefaultNamespace
 {
@@ -24,10 +23,7 @@ namespace DefaultNamespace
             {
                 if (_view.gameObject.activeInHierarchy)
                 {
-                    var request = new WeatherRequest();
-                    _model.EnqueueWeatherRequest(request);
-
-                    var weatherData = await request.GetWeatherDataAsync(_cts.Token);
+                    var weatherData = await _model.GetWeatherAsync();
 
                     if (_view.gameObject.activeInHierarchy)
                     {
@@ -35,7 +31,7 @@ namespace DefaultNamespace
                     }
                     else
                     {
-                        _model.CancelWeatherRequest(request);
+                        _model.CancelWeatherRequest();
                     }
                 }
 

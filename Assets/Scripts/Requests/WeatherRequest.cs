@@ -20,8 +20,6 @@ namespace DefaultNamespace
 
             if (request.result == UnityWebRequest.Result.Success)
             {
-                Debug.Log($"📡 Получены данные о погоде: {request.downloadHandler.text}");
-
                 try
                 {
                     _result = ParseWeatherData(request.downloadHandler.text);
@@ -29,22 +27,21 @@ namespace DefaultNamespace
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError($"❌ Ошибка парсинга данных: {e.Message}");
+                    Debug.LogError($"Ошибка парсинга данных: {e.Message}");
                     _result = null;
                     CompletionSource.TrySetException(e);
                 }
             }
             else
             {
-                Debug.LogError($"❌ Ошибка загрузки погоды: {request.error}");
+                Debug.LogError($" Ошибка загрузки погоды: {request.error}");
                 _result = null;
                 CompletionSource.TrySetException(new System.Exception(request.error));
             }
         }
 
-        public async UniTask<WeatherData> GetWeatherDataAsync(CancellationToken token)
+        public WeatherData GetWeatherData()
         {
-            await CompletionSource.Task.AttachExternalCancellation(token);
             return _result;
         }
 

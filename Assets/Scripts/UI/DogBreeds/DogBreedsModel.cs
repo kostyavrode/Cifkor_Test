@@ -10,6 +10,8 @@ namespace DefaultNamespace.UI.DogBreeds
     public class DogBreedsModel
     {
         private RequestQueueManager _requestQueueManager;
+        private DogBreedRequest _currentRequest;
+        private DogBreedInfoRequest _currentBreedInfoRequest;
 
         [Inject]
         public void Construct(RequestQueueManager requestQueueManager)
@@ -24,9 +26,10 @@ namespace DefaultNamespace.UI.DogBreeds
             
             await request.CompletionSource.Task;
     
-            var breeds = request.GetBreedsDataAsync();
+            var breeds = request.GetBreedsData();
     
-            return breeds ?? new List<DogBreed>();
+            _currentRequest = null;
+            return breeds;
         }
         
         public async UniTask<DogBreedInfo> GetBreedInfoAsync(string breedId, CancellationToken token)
@@ -40,7 +43,20 @@ namespace DefaultNamespace.UI.DogBreeds
                 Debug.LogError("Не удалось получить информацию о породе:"+breedId);
             }
 
+            _currentBreedInfoRequest = null;
             return breedInfo;
+        }
+        
+        public void CancelBreedRequest()
+        {
+            if (_currentRequest != null)
+            _requestQueueManager.RemoveRequest(_currentRequest);
+        }
+
+        public void CancelBreedInfoRequest()
+        {
+            if (_currentBreedInfoRequest != null)
+            _requestQueueManager.RemoveRequest(_currentBreedInfoRequest);
         }
     }
 }
