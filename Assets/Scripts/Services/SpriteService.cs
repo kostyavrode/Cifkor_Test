@@ -7,7 +7,7 @@ namespace DefaultNamespace.Services
 {
     public class SpriteService
     {
-        public async void LoadSprite(string url, Action<Sprite> onLoaded)
+        public async UniTask<Sprite> LoadSpriteAsync(string url)
         {
             using var request = UnityWebRequestTexture.GetTexture(url);
             await request.SendWebRequest();
@@ -15,13 +15,11 @@ namespace DefaultNamespace.Services
             if (request.result == UnityWebRequest.Result.Success)
             {
                 var texture = ((DownloadHandlerTexture)request.downloadHandler).texture;
-                var sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
-                onLoaded?.Invoke(sprite);
+                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector2.one * 0.5f);
             }
-            else
-            {
-                Debug.LogError(" Ошибка загрузки изображения:"+request.error);
-            }
+
+            Debug.LogError($"Ошибка загрузки изображения: {request.error}");
+            return null;
         }
     }
 }

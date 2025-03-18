@@ -29,6 +29,8 @@ namespace DefaultNamespace.DI
                 .UnderTransform(buttonContainer);
             
             Container.BindInterfacesAndSelfTo<DogBreedsPresenter>().AsSingle().NonLazy();
+            
+            Container.Bind<SpriteService>().AsSingle();
         }
     }
 }

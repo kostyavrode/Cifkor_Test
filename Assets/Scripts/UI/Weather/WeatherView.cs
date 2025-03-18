@@ -9,12 +9,11 @@ namespace DefaultNamespace
     {
         [SerializeField] private TMP_Text temperatureText;
         [SerializeField] private Image weatherIcon;
-        private readonly SpriteService _spriteService = new SpriteService();
 
-        public void UpdateWeather(WeatherRequest.WeatherData data)
+        public void UpdateWeather(WeatherRequest.WeatherData data, Sprite sprite)
         {
-            temperatureText.text = "Сегодня "+data.Temperature+data.TemperatureUnit;
-            _spriteService.LoadSprite(data.IconUrl, sprite => weatherIcon.sprite = sprite);
+            temperatureText.text = $"Сегодня {data.Temperature}{data.TemperatureUnit}";
+            weatherIcon.sprite = sprite;
         }
     }
 }
