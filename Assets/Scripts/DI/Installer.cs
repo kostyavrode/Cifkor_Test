@@ -1,7 +1,9 @@
 ﻿using DefaultNamespace.Services;
 using DefaultNamespace.UI.DogBreeds;
 using UI.DogBreeds;
+using UI.Popup;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 namespace DefaultNamespace.DI
@@ -9,9 +11,10 @@ namespace DefaultNamespace.DI
     public class Installer : MonoInstaller
     {
         [SerializeField] private WeatherView _weatherView;
-        [SerializeField] private GameObject dogBreedsScreen;
-        [SerializeField] private DogBreedsButton dogButtonPrefab;
-        [SerializeField] private Transform buttonContainer;
+        [SerializeField] private PopupView _popupView;
+        [SerializeField] private GameObject _dogBreedsScreen;
+        [SerializeField] private DogBreedsButton _dogButtonPrefab;
+        [SerializeField] private Transform _buttonContainer;
 
         public override void InstallBindings()
         {
@@ -19,14 +22,16 @@ namespace DefaultNamespace.DI
             
             Container.Bind<DogBreedsModel>().AsSingle();
             
-            Container.Bind<DogBreedsView>().FromComponentOn(dogBreedsScreen).AsSingle();
+            Container.Bind<DogBreedsView>().FromComponentOn(_dogBreedsScreen).AsSingle();
+            
+            Container.Bind<PopupView>().FromInstance(_popupView).AsSingle();
             
             Container.Bind<WeatherModel>().AsSingle();
             Container.Bind<WeatherPresenter>().AsSingle().WithArguments(_weatherView).NonLazy();
             
             Container.BindFactory<DogBreedsButton, DogButtonFactory>()
-                .FromComponentInNewPrefab(dogButtonPrefab)
-                .UnderTransform(buttonContainer);
+                .FromComponentInNewPrefab(_dogButtonPrefab)
+                .UnderTransform(_buttonContainer);
             
             Container.BindInterfacesAndSelfTo<DogBreedsPresenter>().AsSingle().NonLazy();
             

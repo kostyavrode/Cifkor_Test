@@ -2,16 +2,23 @@
 using TMPro;
 using UI.Popup;
 using UnityEngine;
+using Zenject;
 
 namespace DefaultNamespace.UI.DogBreeds
 {
     public class DogBreedsView : MonoBehaviour
     {
         [SerializeField] private Transform _breedsContainer;
-        [SerializeField] private PopupView _popup;
+        private PopupView _popup;
         
         public event Action<string, DogBreedsButton> OnBreedClicked;
         public event Action OnViewActivated;
+
+        [Inject]
+        public void Construct(PopupView popupView)
+        {
+            _popup = popupView;
+        }
         
         private void OnEnable()
         {

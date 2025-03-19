@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace DefaultNamespace.UI.DogBreeds
@@ -9,7 +10,7 @@ namespace DefaultNamespace.UI.DogBreeds
     {
         [SerializeField] private Button _button;
         [SerializeField] private TMP_Text _breedText;
-        [SerializeField] private GameObject loadingIndicator;
+        [SerializeField] private GameObject _loadingIndicator;
         private string _breedId;
 
         public event Action<string, DogBreedsButton> OnClick;
@@ -18,7 +19,7 @@ namespace DefaultNamespace.UI.DogBreeds
         {
             _breedId = breedId;
             _breedText.text = breedName;
-            loadingIndicator.SetActive(false);
+            _loadingIndicator.SetActive(false);
             _button.onClick.AddListener(() => OnClick(_breedId, this));
         }
 
@@ -29,7 +30,7 @@ namespace DefaultNamespace.UI.DogBreeds
 
         public void SetLoading(bool isLoading)
         {
-            loadingIndicator.SetActive(isLoading);
+            _loadingIndicator.SetActive(isLoading);
             _button.interactable = !isLoading;
         }
     }

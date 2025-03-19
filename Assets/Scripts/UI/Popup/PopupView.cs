@@ -1,32 +1,33 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI.Popup
 {
     public class PopupView : MonoBehaviour
     {
-        [SerializeField] private TMP_Text headerText;
-        [SerializeField] private TMP_Text contentText;
-        [SerializeField] private RectTransform contentRect;
-        [SerializeField] private RectTransform popupRect;
-        [SerializeField] private Button closeButton;
+        [SerializeField] private TMP_Text _headerText;
+        [SerializeField] private TMP_Text _contentText;
+        [SerializeField] private RectTransform _contentRect;
+        [SerializeField] private RectTransform _popupRect;
+        [SerializeField] private Button _closeButton;
 
         private void Awake()
         {
-            closeButton.onClick.AddListener(Hide);
+            _closeButton.onClick.AddListener(Hide);
         }
 
         private void OnDestroy()
         {
-            closeButton.onClick.RemoveAllListeners();
+            _closeButton.onClick.RemoveAllListeners();
         }
 
         public void Show(string header, string content)
         {
-            headerText.text = header;
-            contentText.text = content;
+            _headerText.text = header;
+            _contentText.text = content;
 
             UpdatePopupSize(content);
             gameObject.SetActive(true);
@@ -34,13 +35,13 @@ namespace UI.Popup
 
         private void UpdatePopupSize(string content)
         {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(contentRect);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(_contentRect);
             
             float newHeight = 200 + (content.Length * 2);
             
             newHeight = Mathf.Clamp(newHeight, 200, 6000f);
             
-            contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, newHeight);
+            _contentRect.sizeDelta = new Vector2(_contentRect.sizeDelta.x, newHeight);
         }
 
         public void Hide()

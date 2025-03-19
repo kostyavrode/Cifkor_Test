@@ -346,4 +346,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _button: {fileID: 2016606734430453534}
   _breedText: {fileID: 3614293342258045057}
-  loadingIndicator: {fileID: 1881611573603778858}
+  _loadingIndicator: {fileID: 1881611573603778858}

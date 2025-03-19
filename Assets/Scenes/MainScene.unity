@@ -923,9 +923,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weatherView: {fileID: 1483523817}
-  dogBreedsScreen: {fileID: 787724804}
-  dogButtonPrefab: {fileID: 6646725808578203826, guid: 837e648acbb6ebd4ca85ae674d9ce0fe, type: 3}
-  buttonContainer: {fileID: 1518794725}
+  _popupView: {fileID: 1180275925}
+  _dogBreedsScreen: {fileID: 787724804}
+  _dogButtonPrefab: {fileID: 6646725808578203826, guid: 837e648acbb6ebd4ca85ae674d9ce0fe, type: 3}
+  _buttonContainer: {fileID: 1518794725}
 --- !u!1 &710754000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,7 +1085,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _breedsContainer: {fileID: 1518794725}
-  _popup: {fileID: 1180275925}
 --- !u!1 &834809642
 GameObject:
   m_ObjectHideFlags: 0
@@ -1615,11 +1615,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be9c48c3652e4ec3b02a126b4bcf8427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headerText: {fileID: 898966649}
-  contentText: {fileID: 890501609}
-  contentRect: {fileID: 147566307}
-  popupRect: {fileID: 1180275922}
-  closeButton: {fileID: 2124769634}
+  _headerText: {fileID: 898966649}
+  _contentText: {fileID: 890501609}
+  _contentRect: {fileID: 147566307}
+  _popupRect: {fileID: 1180275922}
+  _closeButton: {fileID: 2124769634}
 --- !u!1 &1345956301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1804,8 +1804,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fc9d3a045c94c5b8299e42fe3f3ce3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  temperatureText: {fileID: 1345956303}
-  weatherIcon: {fileID: 1769024335}
+  _temperatureText: {fileID: 1345956303}
+  _weatherIcon: {fileID: 1769024335}
 --- !u!1 &1518794724
 GameObject:
   m_ObjectHideFlags: 0
