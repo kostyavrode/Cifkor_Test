@@ -1,4 +1,5 @@
-﻿using DefaultNamespace.Services;
+﻿using System;
+using DefaultNamespace.Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -10,6 +11,13 @@ namespace DefaultNamespace
     {
         [SerializeField] private TMP_Text _temperatureText;
         [SerializeField] private Image _weatherIcon;
+        
+        public event Action OnViewActivated;
+
+        private void OnEnable()
+        {
+            OnViewActivated?.Invoke();
+        }
 
         public void UpdateWeather(WeatherRequest.WeatherData data, Sprite sprite)
         {

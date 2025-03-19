@@ -27,7 +27,7 @@ namespace DefaultNamespace.DI
             Container.Bind<PopupView>().FromInstance(_popupView).AsSingle();
             
             Container.Bind<WeatherModel>().AsSingle();
-            Container.Bind<WeatherPresenter>().AsSingle().WithArguments(_weatherView).NonLazy();
+            Container.BindInterfacesAndSelfTo<WeatherPresenter>().AsSingle().WithArguments(_weatherView).NonLazy();
             
             Container.BindFactory<DogBreedsButton, DogButtonFactory>()
                 .FromComponentInNewPrefab(_dogButtonPrefab)

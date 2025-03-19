@@ -1,10 +1,12 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 using DefaultNamespace.Services;
+using Zenject;
 
 namespace DefaultNamespace
 {
-    public class WeatherPresenter
+    public class WeatherPresenter : IDisposable
     {
         private readonly WeatherModel _model;
         private readonly WeatherView _view;
@@ -17,6 +19,16 @@ namespace DefaultNamespace
             _view = view;
             _cts = new CancellationTokenSource();
             _spriteService = spriteService;
+            _view.OnViewActivated += StartWeather;
+        }
+        
+        public void Dispose()
+        {
+            _view.OnViewActivated -= StartWeather;
+        }
+
+        private void StartWeather()
+        {
             StartUpdatingWeather().Forget();
         }
 
