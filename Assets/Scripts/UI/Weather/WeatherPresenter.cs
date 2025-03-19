@@ -8,17 +8,18 @@ namespace DefaultNamespace
 {
     public class WeatherPresenter : IDisposable
     {
-        private readonly WeatherModel _model;
-        private readonly WeatherView _view;
-        private readonly SpriteService _spriteService;
+        private WeatherModel _model;
+        private WeatherView _view;
+        private SpriteService _spriteService;
         private CancellationTokenSource _cts;
 
-        public WeatherPresenter(WeatherModel model, WeatherView view, SpriteService spriteService)
+        [Inject]
+        public void Construct(WeatherModel model, WeatherView view, SpriteService spriteService)
         {
             _model = model;
             _view = view;
-            _cts = new CancellationTokenSource();
             _spriteService = spriteService;
+            _cts = new CancellationTokenSource();
             _view.OnViewActivated += StartWeather;
         }
         

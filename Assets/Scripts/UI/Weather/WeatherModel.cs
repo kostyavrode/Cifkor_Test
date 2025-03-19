@@ -1,13 +1,15 @@
 ﻿using Cysharp.Threading.Tasks;
+using Zenject;
 
 namespace DefaultNamespace
 {
     public class WeatherModel
     {
-        private readonly RequestQueueManager _requestQueueManager;
+        private RequestQueueManager _requestQueueManager;
         private WeatherRequest _currentRequest;
 
-        public WeatherModel(RequestQueueManager requestQueueManager)
+        [Inject]
+        public void Construct(RequestQueueManager requestQueueManager)
         {
             _requestQueueManager = requestQueueManager;
         }
