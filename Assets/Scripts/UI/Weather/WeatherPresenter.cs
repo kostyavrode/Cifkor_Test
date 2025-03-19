@@ -6,7 +6,7 @@ using Zenject;
 
 namespace DefaultNamespace
 {
-    public class WeatherPresenter : IDisposable
+    public class WeatherPresenter : IInitializable,IDisposable
     {
         private WeatherModel _model;
         private WeatherView _view;
@@ -20,9 +20,13 @@ namespace DefaultNamespace
             _view = view;
             _spriteService = spriteService;
             _cts = new CancellationTokenSource();
+             // в Initialize() не успневает обработаться _view.OnEnable. Поэтому это здесь
+        }
+
+        public void Initialize()
+        {
             _view.OnViewActivated += StartWeather;
         }
-        
         public void Dispose()
         {
             _view.OnViewActivated -= StartWeather;

@@ -37,5 +37,10 @@ namespace DefaultNamespace.DI
             
             Container.Bind<SpriteService>().AsSingle();
         }
+
+        private void Start()
+        {
+            _weatherView.gameObject.SetActive(true);
+        }
     }
 }
