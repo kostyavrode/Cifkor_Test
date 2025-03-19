@@ -20,7 +20,6 @@ namespace DefaultNamespace
             _view = view;
             _spriteService = spriteService;
             _cts = new CancellationTokenSource();
-             // в Initialize() не успневает обработаться _view.OnEnable. Поэтому это здесь
         }
 
         public void Initialize()
